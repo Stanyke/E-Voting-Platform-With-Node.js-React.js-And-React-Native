@@ -1,0 +1,37 @@
+{
+  "name": "team-040-e-voting-app",
+  "version": "1.0.0",
+  "description": "Team-040-E-Voting-App",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BuildForSDG/Team-040.git"
+  },
+  "keywords": [
+    "api",
+    "e-voting",
+    "voting",
+    "app",
+    "andela",
+    "facebook"
+  ],
+  "author": "Team-40",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BuildForSDG/Team-040/issues"
+  },
+  "homepage": "https://github.com/BuildForSDG/Team-040#readme",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "date-and-time": "^0.13.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.4",
+    "pg": "^8.2.1"
+  }
+}
