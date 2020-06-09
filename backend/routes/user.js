@@ -242,6 +242,6 @@ app.get('/profile', justAuthenticate, (req, res) =>
     });
 });
 
-const routeApp = app;
+const userRoute = app;
 
-module.exports = routeApp;
+module.exports = userRoute;

@@ -1,6 +1,10 @@
 const app = require('./app');
 
-const routeApp = require('./routes/user');
+const userRoute = require('./routes/user');
+
+const contestantRoute = require('./routes/contestant');
+
+const voteRoute = require('./routes/vote');
 
 const client = require('./db/connectDB');
 
