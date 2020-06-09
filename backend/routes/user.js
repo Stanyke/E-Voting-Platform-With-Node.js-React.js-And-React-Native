@@ -8,7 +8,7 @@ const app = require('../app');
 
 const client = require('../db/connectDB');
 
-// const justAuthenticate = require('../middlewares/verifyToken');
+const justAuthenticate = require('../middlewares/verifyToken');
 
 
 //All Users
@@ -144,7 +144,7 @@ app.post('/register', function (req, response)
 
 
 
-//For Login in
+//For Login
 app.post('/login', (req, result) =>
 {
     const data = {
@@ -192,6 +192,52 @@ app.post('/login', (req, result) =>
         {
             console.log('Email Is Not Registered With Us');
             result.status(404).send('Email Is Not Registered With Us');
+        }
+    });
+});
+
+
+//For Viewing Profile
+app.get('/profile', justAuthenticate, (req, res) =>
+{
+    jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
+    {
+        if (err)
+        {
+            res.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
+        }
+        else
+        {
+            const currentLoggedInEmail = authData.data.email;
+
+            client.query(`SELECT * FROM users WHERE email ='${currentLoggedInEmail}' LIMIT 1`, (errquery, resquery) =>
+            {
+                if (resquery.rows[0])
+                {
+                    res.status(200).json({
+                        "user_info": {
+                            "fullname": `${resquery.rows[0].firstname+" "+resquery.rows[0].lastname}`,
+                            "email": currentLoggedInEmail,
+                            "gender": `${resquery.rows[0].gender}`,
+                            "phone_number": `${resquery.rows[0].phone_number}`,
+                            "state_of_origin": `${resquery.rows[0].state_of_origin}`,
+                            "local_govt": `${resquery.rows[0].local_govt}`,
+                            "vin": `${resquery.rows[0].vin}`
+                        }
+                    })
+                }
+                
+                if (errquery)
+                {
+                    res.status(500).send('We Encountered An Internal Error, Try Again...');
+                } 
+
+                if (!resquery.rows[0])
+                {
+                    console.log('Email Is Not Registered With Us');
+                    res.status(404).send('Email Is Not Registered With Us');
+                }
+            });
         }
     });
 });
