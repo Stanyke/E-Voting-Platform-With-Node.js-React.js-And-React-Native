@@ -165,90 +165,101 @@ app.get('/vote/local', justAuthenticate, (req, result) =>
 //For logged in user voting for local Govt. election
 app.post('/vote/local', justAuthenticate, (req, response) =>
 {
-    jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
+    if (!req.body.email || !req.body.voter_party)
     {
-        if (err)
+        console.log('Request failed due to all required inputs were not included');
+        res.status(500).json({
+            "message": 'Request failed due to all required inputs were not included',
+            "required inputs": "email, voter_party"
+        });
+    }
+    else
+    {
+        jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
         {
-            response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
-        }
-        else
-        {
-            const currentLoggedInEmail = authData.data.email;
-            
-            if(currentLoggedInEmail === req.body.email)
+            if (err)
             {
-                client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
-                {
-                    if (derr)
-                    {
-                        console.log('We Encountered An Issue Proccessing With Our Server');
-                        response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                    }
-                    
-                    if (myres.rows[0])
-                    {
-                        // Grab data from http request
-                        const data = {
-                            email: req.body.email,
-                            voter_party: req.body.voter_party
-                        };
-
-                        //Check if user has voted before
-                        client.query(`SELECT * FROM local_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
-                        {
-                            if (vberr)
-                            {
-                                console.log('We Encountered An Issue Proccessing With Our Server');
-                                response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                            }
-
-                            if (vbres.rows[0])
-                            {
-                                console.log('You have voted for your preferred local Govt. party and can only vote ones');
-                                response.status(400).send('You have voted for your preferred local Govt. party and can only vote ones');
-                            }
-
-                            if (!vbres.rows[0])
-                            {
-                                const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
-
-                                const readDate = new Date();
-                                const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
-
-
-                                const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
-
-                                client.query('INSERT INTO local_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
-                                {
-                                    if (uerr)
-                                    {
-                                        console.log('We encountered an issue submitting your local Govt. election vote');
-                                        response.status(500).send('We encountered an issue submitting your local Govt. election vote');
-                                    }
-                                    if (result)
-                                    {
-                                        console.log('You have successfully voted for your preferred local Govt. election party');
-                                        response.status(201).send('You have successfully voted for your preferred local Govt. election party');   
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    if (!myres.rows[0])
-                    {
-                        console.log('Email Is Not Registered With Us');
-                        response.status(404).send('Email Is Not Registered With Us');
-                    }
-                });
+                response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
             }
             else
             {
-                console.log('You are only allowed to vote with your currently logged in email');
-                response.status(400).send('You are only allowed to vote with your currently logged in email');
+                const currentLoggedInEmail = authData.data.email;
+                
+                if(currentLoggedInEmail === req.body.email)
+                {
+                    client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
+                    {
+                        if (derr)
+                        {
+                            console.log('We Encountered An Issue Proccessing With Our Server');
+                            response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                        }
+                        
+                        if (myres.rows[0])
+                        {
+                            // Grab data from http request
+                            const data = {
+                                email: req.body.email,
+                                voter_party: req.body.voter_party
+                            };
+
+                            //Check if user has voted before
+                            client.query(`SELECT * FROM local_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
+                            {
+                                if (vberr)
+                                {
+                                    console.log('We Encountered An Issue Proccessing With Our Server');
+                                    response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                                }
+
+                                if (vbres.rows[0])
+                                {
+                                    console.log('You have voted for your preferred local Govt. party and can only vote ones');
+                                    response.status(400).send('You have voted for your preferred local Govt. party and can only vote ones');
+                                }
+
+                                if (!vbres.rows[0])
+                                {
+                                    const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
+
+                                    const readDate = new Date();
+                                    const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
+
+
+                                    const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
+
+                                    client.query('INSERT INTO local_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
+                                    {
+                                        if (uerr)
+                                        {
+                                            console.log('We encountered an issue submitting your local Govt. election vote');
+                                            response.status(500).send('We encountered an issue submitting your local Govt. election vote');
+                                        }
+                                        if (result)
+                                        {
+                                            console.log('You have successfully voted for your preferred local Govt. election party');
+                                            response.status(201).send('You have successfully voted for your preferred local Govt. election party');   
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                        if (!myres.rows[0])
+                        {
+                            console.log('Email Is Not Registered With Us');
+                            response.status(404).send('Email Is Not Registered With Us');
+                        }
+                    });
+                }
+                else
+                {
+                    console.log('You are only allowed to vote with your currently logged in email');
+                    response.status(400).send('You are only allowed to vote with your currently logged in email');
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 //Check if logged in user has voted for state election
@@ -294,90 +305,101 @@ app.get('/vote/state', justAuthenticate, (req, result) =>
 //For logged in user voting for state election
 app.post('/vote/state', justAuthenticate, (req, response) =>
 {
-    jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
+    if (!req.body.email || !req.body.voter_party)
     {
-        if (err)
+        console.log('Request failed due to all required inputs were not included');
+        res.status(500).json({
+            "message": 'Request failed due to all required inputs were not included',
+            "required inputs": "email, voter_party"
+        });
+    }
+    else
+    {
+        jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
         {
-            response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
-        }
-        else
-        {
-            const currentLoggedInEmail = authData.data.email;
-            
-            if(currentLoggedInEmail === req.body.email)
+            if (err)
             {
-                client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
-                {
-                    if (derr)
-                    {
-                        console.log('We Encountered An Issue Proccessing With Our Server');
-                        response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                    }
-                    
-                    if (myres.rows[0])
-                    {
-                        // Grab data from http request
-                        const data = {
-                            email: req.body.email,
-                            voter_party: req.body.voter_party
-                        };
-
-                        //Check if user has voted before
-                        client.query(`SELECT * FROM state_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
-                        {
-                            if (vberr)
-                            {
-                                console.log('We Encountered An Issue Proccessing With Our Server');
-                                response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                            }
-
-                            if (vbres.rows[0])
-                            {
-                                console.log('You have voted for your preferred state party and can only vote ones');
-                                response.status(400).send('You have voted for your preferred state party and can only vote ones');
-                            }
-
-                            if (!vbres.rows[0])
-                            {
-                                const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
-
-                                const readDate = new Date();
-                                const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
-
-
-                                const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
-
-                                client.query('INSERT INTO state_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
-                                {
-                                    if (uerr)
-                                    {
-                                        console.log('We encountered an issue submitting your state election vote');
-                                        response.status(500).send('We encountered an issue submitting your state election vote');
-                                    }
-                                    if (result)
-                                    {
-                                        console.log('You have successfully voted for your preferred state election party');
-                                        response.status(201).send('You have successfully voted for your preferred state election party');   
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    if (!myres.rows[0])
-                    {
-                        console.log('Email Is Not Registered With Us');
-                        response.status(404).send('Email Is Not Registered With Us');
-                    }
-                });
+                response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
             }
             else
             {
-                console.log('You are only allowed to vote with your currently logged in email');
-                response.status(400).send('You are only allowed to vote with your currently logged in email');
+                const currentLoggedInEmail = authData.data.email;
+                
+                if(currentLoggedInEmail === req.body.email)
+                {
+                    client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
+                    {
+                        if (derr)
+                        {
+                            console.log('We Encountered An Issue Proccessing With Our Server');
+                            response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                        }
+                        
+                        if (myres.rows[0])
+                        {
+                            // Grab data from http request
+                            const data = {
+                                email: req.body.email,
+                                voter_party: req.body.voter_party
+                            };
+
+                            //Check if user has voted before
+                            client.query(`SELECT * FROM state_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
+                            {
+                                if (vberr)
+                                {
+                                    console.log('We Encountered An Issue Proccessing With Our Server');
+                                    response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                                }
+
+                                if (vbres.rows[0])
+                                {
+                                    console.log('You have voted for your preferred state party and can only vote ones');
+                                    response.status(400).send('You have voted for your preferred state party and can only vote ones');
+                                }
+
+                                if (!vbres.rows[0])
+                                {
+                                    const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
+
+                                    const readDate = new Date();
+                                    const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
+
+
+                                    const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
+
+                                    client.query('INSERT INTO state_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
+                                    {
+                                        if (uerr)
+                                        {
+                                            console.log('We encountered an issue submitting your state election vote');
+                                            response.status(500).send('We encountered an issue submitting your state election vote');
+                                        }
+                                        if (result)
+                                        {
+                                            console.log('You have successfully voted for your preferred state election party');
+                                            response.status(201).send('You have successfully voted for your preferred state election party');   
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                        if (!myres.rows[0])
+                        {
+                            console.log('Email Is Not Registered With Us');
+                            response.status(404).send('Email Is Not Registered With Us');
+                        }
+                    });
+                }
+                else
+                {
+                    console.log('You are only allowed to vote with your currently logged in email');
+                    response.status(400).send('You are only allowed to vote with your currently logged in email');
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 //Check if logged in user has voted for presidential election
@@ -423,90 +445,101 @@ app.get('/vote/country', justAuthenticate, (req, result) =>
 //For logged in user voting for presidential election
 app.post('/vote/country', justAuthenticate, (req, response) =>
 {
-    jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
+    if (!req.body.email || !req.body.voter_party)
     {
-        if (err)
+        console.log('Request failed due to all required inputs were not included');
+        res.status(500).json({
+            "message": 'Request failed due to all required inputs were not included',
+            "required inputs": "email, voter_party"
+        });
+    }
+    else
+    {
+        jwt.verify(req.token, 'myscreteisreal', (err, authData) =>
         {
-            response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
-        }
-        else
-        {
-            const currentLoggedInEmail = authData.data.email;
-            
-            if(currentLoggedInEmail === req.body.email)
+            if (err)
             {
-                client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
-                {
-                    if (derr)
-                    {
-                        console.log('We Encountered An Issue Proccessing With Our Server');
-                        response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                    }
-                    
-                    if (myres.rows[0])
-                    {
-                        // Grab data from http request
-                        const data = {
-                            email: req.body.email,
-                            voter_party: req.body.voter_party
-                        };
-
-                        //Check if user has voted before
-                        client.query(`SELECT * FROM presidential_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
-                        {
-                            if (vberr)
-                            {
-                                console.log('We Encountered An Issue Proccessing With Our Server');
-                                response.status(500).send('We Encountered An Issue Proccessing With Our Server');
-                            }
-
-                            if (vbres.rows[0])
-                            {
-                                console.log('You have voted for your preferred presidential party and can only vote ones');
-                                response.status(400).send('You have voted for your preferred presidential party and can only vote ones');
-                            }
-
-                            if (!vbres.rows[0])
-                            {
-                                const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
-
-                                const readDate = new Date();
-                                const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
-
-
-                                const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
-
-                                client.query('INSERT INTO presidential_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
-                                {
-                                    if (uerr)
-                                    {
-                                        console.log('We encountered an issue submitting your presidential election vote');
-                                        response.status(500).send('We encountered an issue submitting your presidential election vote');
-                                    }
-                                    if (result)
-                                    {
-                                        console.log('You have successfully voted for your preferred presidential election party');
-                                        response.status(201).send('You have successfully voted for your preferred presidential election party');   
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    if (!myres.rows[0])
-                    {
-                        console.log('Email Is Not Registered With Us');
-                        response.status(404).send('Email Is Not Registered With Us');
-                    }
-                });
+                response.status(403).json({ error: "You're Not Authorized To View This Profile, As You're Not Logged In With Correct Token..." });
             }
             else
             {
-                console.log('You are only allowed to vote with your currently logged in email');
-                response.status(400).send('You are only allowed to vote with your currently logged in email');
+                const currentLoggedInEmail = authData.data.email;
+                
+                if(currentLoggedInEmail === req.body.email)
+                {
+                    client.query(`SELECT * FROM users WHERE email ='${req.body.email}'`, (derr, myres) => 
+                    {
+                        if (derr)
+                        {
+                            console.log('We Encountered An Issue Proccessing With Our Server');
+                            response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                        }
+                        
+                        if (myres.rows[0])
+                        {
+                            // Grab data from http request
+                            const data = {
+                                email: req.body.email,
+                                voter_party: req.body.voter_party
+                            };
+
+                            //Check if user has voted before
+                            client.query(`SELECT * FROM presidential_votes WHERE email ='${req.body.email}'`, (vberr, vbres) => 
+                            {
+                                if (vberr)
+                                {
+                                    console.log('We Encountered An Issue Proccessing With Our Server');
+                                    response.status(500).send('We Encountered An Issue Proccessing With Our Server');
+                                }
+
+                                if (vbres.rows[0])
+                                {
+                                    console.log('You have voted for your preferred presidential party and can only vote ones');
+                                    response.status(400).send('You have voted for your preferred presidential party and can only vote ones');
+                                }
+
+                                if (!vbres.rows[0])
+                                {
+                                    const fullname = `${myres.rows[0].firstname+" "+myres.rows[0].lastname}`;
+
+                                    const readDate = new Date();
+                                    const currentTimeAndDate = date.format(readDate, 'ddd. hh:mm A, MMM. DD YYYY', true);
+
+
+                                    const realvalues = [data.email, fullname, data.voter_party, currentTimeAndDate];
+
+                                    client.query('INSERT INTO presidential_votes (email, fullname, voter_party, reg_time) values($1, $2, $3, $4)', realvalues, (uerr, result) =>
+                                    {
+                                        if (uerr)
+                                        {
+                                            console.log('We encountered an issue submitting your presidential election vote');
+                                            response.status(500).send('We encountered an issue submitting your presidential election vote');
+                                        }
+                                        if (result)
+                                        {
+                                            console.log('You have successfully voted for your preferred presidential election party');
+                                            response.status(201).send('You have successfully voted for your preferred presidential election party');   
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                        if (!myres.rows[0])
+                        {
+                            console.log('Email Is Not Registered With Us');
+                            response.status(404).send('Email Is Not Registered With Us');
+                        }
+                    });
+                }
+                else
+                {
+                    console.log('You are only allowed to vote with your currently logged in email');
+                    response.status(400).send('You are only allowed to vote with your currently logged in email');
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 
