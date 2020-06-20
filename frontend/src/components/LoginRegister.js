@@ -41,6 +41,7 @@ class LoginRegister extends Component {
             toast.success('Welcome To E-Voting', {position: toast.POSITION.BOTTOM_CENTER})
 
             document.getElementById('beatLoaders').style.display = 'none'
+            document.getElementById('loginBeatLoaders').style.display = 'none'
         }
 
         populateStates()
@@ -187,6 +188,11 @@ class LoginRegister extends Component {
                         <b>Loading...</b>
                     </div>
 
+                    <div id="loginBeatLoaders" align="center">
+                        <BeatLoader size={50} color="#c31432" loading />
+                        <b>Auto-Logging In...</b>
+                    </div>
+
                 </div>
             )
         }
@@ -272,19 +278,6 @@ class LoginRegister extends Component {
                 document.getElementById("registerButton").disabled = false;
                 
                 toast.error(error.response.data, {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
-
-                // if (error.response.status === 404)
-                // {
-                //     toast.error('Email Is Not Registered With Us', {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
-                // }
-                // else if (error.response.status === 500)
-                // {
-                //     toast.error('We Encountered An Internal Error, Try Again...', {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
-                // }
-                // else if(error.response.status === 401)
-                // {
-                //     toast.error('Incorrect password!', {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
-                // }
             })
         }
         
@@ -319,28 +312,56 @@ class LoginRegister extends Component {
             }
         
             axios.post(baseUrl,datapost)
-            .then(result=>{
+            .then(registrationResult=>{
 
                 document.getElementById('beatLoaders').style.display = 'none';
                 document.getElementById("signInButton").disabled = false;
                 document.getElementById("registerButton").disabled = false;
 
-                if(result.status === 200)
+                if(registrationResult.status === 200)
                 {
-                    toast.success(result.data, {position: toast.POSITION.TOP_RIGHT});
+                    toast.error(registrationResult.data, {position: toast.POSITION.TOP_RIGHT});
                 }
 
-                else if (result.status === 201)
-                {                    
-                    toast.success('Registration Successful, You May Now Login.', {position: toast.POSITION.TOP_RIGHT});
+                else if (registrationResult.status === 201)
+                {
+                    document.getElementById('loginBeatLoaders').style.display = 'block';
+
+                    toast.success('Registration Successful', {position: toast.POSITION.TOP_RIGHT});
+
+                    // Login the user after success registration
+                    const loginURL = "https://sdg-team-40.herokuapp.com/login"
+     
+                    const loginPostData = {
+                        email : this.state.emailFromRegister,
+                        password : this.state.passwordFromRegister
+                    }
+
+                    axios.post(loginURL,loginPostData)
+                    .then(loginResult=>{
+                        if (loginResult.data)
+                        {
+                            Cookies.set('authToken', `${loginResult.data.data.token}`, { expires: 7, path: '/' });
+                            toast.success('Login Successful', {position: toast.POSITION.TOP_RIGHT});
+
+                            this.setState({
+                                userLoggedIn: true
+                            })
+                            
+                        }
+                    }).catch(loginError=>{
+                        
+                        document.getElementById('loginBeatLoaders').style.display = 'none';
+                        toast.error(loginError.response.data, {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
+                    })
                 }
                 
-            }).catch(error=>{
+            }).catch(registrationError=>{
                 document.getElementById('beatLoaders').style.display = 'none';
                 document.getElementById("signInButton").disabled = false;
                 document.getElementById("registerButton").disabled = false;
                 
-                toast.error(error.response.data, {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
+                toast.error(registrationError.response.data, {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
             });
         }
     }
