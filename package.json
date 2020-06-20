@@ -1,0 +1,22 @@
+{
+  "homepage": "http://Stanyke.github.io/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend",
+  "name": "sdg",
+  "version": "1.0.0",
+  "description": "E-Voting-Platform-With-Node.js-React.js-And-React-Native",
+  "main": "index.js",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stanyke/E-Voting-Platform-With-Node.js-React.js-And-React-Native.git"
+  },
+  "author": "Stanley Chibuike",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Stanyke/E-Voting-Platform-With-Node.js-React.js-And-React-Native/issues"
+  },
+  "homepage": "https://github.com/Stanyke/E-Voting-Platform-With-Node.js-React.js-And-React-Native#readme"
+}
