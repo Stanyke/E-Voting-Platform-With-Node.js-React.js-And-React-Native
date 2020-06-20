@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/css/main.4fbc93c7.chunk.css",
+    "main.js": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/main.00f76ee3.chunk.js",
+    "main.js.map": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/main.00f76ee3.chunk.js.map",
+    "runtime-main.js": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/runtime-main.dc26375d.js",
+    "runtime-main.js.map": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/runtime-main.dc26375d.js.map",
+    "static/css/2.d34346ea.chunk.css": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/css/2.d34346ea.chunk.css",
+    "static/js/2.ee7b7880.chunk.js": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/2.ee7b7880.chunk.js",
+    "static/js/2.ee7b7880.chunk.js.map": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/2.ee7b7880.chunk.js.map",
+    "index.html": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/index.html",
+    "precache-manifest.6c3118de4dcf56e4ee5a8a11d2c1642b.js": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/precache-manifest.6c3118de4dcf56e4ee5a8a11d2c1642b.js",
+    "service-worker.js": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/service-worker.js",
+    "static/css/2.d34346ea.chunk.css.map": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/css/2.d34346ea.chunk.css.map",
+    "static/css/main.4fbc93c7.chunk.css.map": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/css/main.4fbc93c7.chunk.css.map",
+    "static/js/2.ee7b7880.chunk.js.LICENSE.txt": "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/static/js/2.ee7b7880.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.dc26375d.js",
+    "static/css/2.d34346ea.chunk.css",
+    "static/js/2.ee7b7880.chunk.js",
+    "static/css/main.4fbc93c7.chunk.css",
+    "static/js/main.00f76ee3.chunk.js"
+  ]
+}
