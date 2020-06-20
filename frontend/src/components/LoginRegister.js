@@ -90,6 +90,9 @@ class LoginRegister extends Component {
                                         <div className="input-group-text"><i className="fa fa-lock"></i></div>
                                     </div>
                                     <input type="password" className="form-control" id="loginPassword" placeholder="********" onChange={this.getLoginPassword} ref={this.loginPasswordRef} required />
+                                    <div className="input-group-prepend">
+                                        <div className="input-group-text"><i className="fa fa-eye-slash" onClick={() => this.viewLoginPassword()} id="loginPasswordIcon"></i></div>
+                                    </div>
                                 </div>
 
                                 <button type="submit" className="form-control btn btn-primary" id="signInButton">Sign in</button>
@@ -130,7 +133,7 @@ class LoginRegister extends Component {
                                     </div>
                                     <input type="password" className="form-control" id="registerPassword" placeholder="********" value={this.state.passwordFromRegister} onChange={(value)=> this.setState({passwordFromRegister: value.target.value})} required />
                                     <div className="input-group-prepend">
-                                        <div className="input-group-text"><i className="fa fa-eye-slash"></i></div>
+                                        <div className="input-group-text"><i className="fa fa-eye-slash" onClick={() => this.viewRegistrationPassword()} id="registerPasswordIcon"></i></div>
                                     </div>
                                 </div>
 
@@ -139,6 +142,7 @@ class LoginRegister extends Component {
                                         <div className="input-group-text"><i className="fa fa-users"></i></div>
                                     </div>
                                     <select id="registerGender" className="form-control" onChange={(value)=> this.setState({genderFromRegister: value.target.value})}>
+                                        <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option vlaue="Female">Female</option>
                                     </select>
@@ -187,6 +191,43 @@ class LoginRegister extends Component {
             )
         }
     }
+
+
+    viewLoginPassword = () =>
+    {
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginPasswordIcon = document.getElementById('loginPasswordIcon');
+    
+        if (loginPasswordInput.type == 'password')
+        {
+            loginPasswordInput.type = 'text';
+            loginPasswordIcon.className = 'fa fa-eye';
+        }
+        else
+        {
+            loginPasswordInput.type = 'password';
+            loginPasswordIcon.className = 'fa fa-eye-slash';
+        }
+    }
+
+    viewRegistrationPassword = () =>
+    {
+        const registerPasswordInput = document.getElementById('registerPassword');
+        const registerPasswordIcon = document.getElementById('registerPasswordIcon');
+    
+        if (registerPasswordInput.type == 'password')
+        {
+            registerPasswordInput.type = 'text';
+            registerPasswordIcon.className = 'fa fa-eye';
+        }
+        else
+        {
+            registerPasswordInput.type = 'password';
+            registerPasswordIcon.className = 'fa fa-eye-slash';
+        }
+    }
+
+    
     
     handleLoginForm = (event) => {
         event.preventDefault();
@@ -247,6 +288,59 @@ class LoginRegister extends Component {
             })
         }
         
+    }
+
+
+    handleRegistrationForm = (event) => {
+        event.preventDefault();
+
+        if(this.state.firstnameFromRegister === "" || this.state.lastnameFromRegister === "" || this.state.emailFromRegister === "" || this.state.passwordFromRegister === "" || this.state.genderFromRegister === "" || this.state.phoneFromRegister === "" || this.state.stateFromRegister === "" || this.state.localGovtFromRegister === "" || this.state.VINFromRegister === "")
+        {
+            toast.error('One or more registration field is empty', {position: toast.POSITION.TOP_RIGHT})
+        }
+        else
+        {
+            document.getElementById('beatLoaders').style.display = 'block';
+            document.getElementById('signInButton').disabled = 'true';
+            document.getElementById('registerButton').disabled = 'true';
+
+            const baseUrl = "https://sdg-team-40.herokuapp.com/register"
+     
+            const datapost = {
+                firstname: this.state.firstnameFromRegister,
+                lastname: this.state.lastnameFromRegister,
+                email : this.state.emailFromRegister,
+                password : this.state.passwordFromRegister,
+                gender: this.state.genderFromRegister,
+                phone_number: this.state.phoneFromRegister,
+                state_of_origin: this.state.stateFromRegister,
+                local_govt: this.state.localGovtFromRegister,
+                vin: this.state.VINFromRegister
+            }
+        
+            axios.post(baseUrl,datapost)
+            .then(result=>{
+
+                document.getElementById('beatLoaders').style.display = 'none';
+
+                if (result.data)
+                {
+                    // Cookies.set('authToken', `${result.data.data.token}`, { expires: 7, path: '/' });
+                    toast.success('Registration Successful', {position: toast.POSITION.TOP_RIGHT});
+
+                    // this.setState({
+                    //     userLoggedIn: true
+                    // })
+                    
+                }
+            }).catch(error=>{
+                document.getElementById('beatLoaders').style.display = 'none';
+                document.getElementById("signInButton").disabled = false;
+                document.getElementById("registerButton").disabled = false;
+                
+                toast.error(error.response.data, {position: toast.POSITION.TOP_LEFT, autoClose: 8000})
+            });
+        }
     }
 }
 
