@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/precache-manifest.6c3118de4dcf56e4ee5a8a11d2c1642b.js"
+  "/E-Voting-Platform-With-Node.js-React.js-And-React-Native/precache-manifest.14eb001eddb9e98786ddfb63b05402e4.js"
 );
 
 self.addEventListener('message', (event) => {
@@ -33,7 +33,7 @@ workbox.core.clientsClaim();
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL("/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend/index.html"), {
+workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL("/E-Voting-Platform-With-Node.js-React.js-And-React-Native/index.html"), {
   
   blacklist: [/^\/_/,/\/[^/?]+\.[^/]+$/],
 });
