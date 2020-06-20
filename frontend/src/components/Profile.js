@@ -43,11 +43,15 @@ class Profile extends Component {
         this.setState({
             userToken: ''
         })
-        toast.warning('Logout Successful', {position: toast.POSITION.TOP_LEFT});
+        toast.error('Logout Successful', {position: toast.POSITION.TOP_LEFT, autoClose: 1500});
     }
 
     componentDidMount()
     {
+        const profileCardCarrier = document.getElementById('profileCardCarrier');
+
+        profileCardCarrier.style.display = 'none';
+
         if(this.state.userToken !== '' || Cookies.get('authToken') !== '')
         {
             const baseUrl = "https://sdg-team-40.herokuapp.com/profile"
@@ -59,29 +63,30 @@ class Profile extends Component {
                     'Content-Type': 'application/json'
                 }}).then(result=>{
 
-                document.getElementById('beatLoaders').style.display = 'none';
+                    document.getElementById('beatLoaders').style.display = 'none';
+                    profileCardCarrier.style.display = 'block';
 
-                if (result.data)
-                {
-                    const userDetails = result.data.user_info;
-                    
-                    this.setState({
-                        userEmail: userDetails.email,
-                        userFullname: userDetails.fullname,
-                        userGender: userDetails.gender,
-                        userPhone: userDetails.phone_number,
-                        userState: userDetails.state_of_origin,
-                        userLocalGovt: userDetails.local_govt,
-                        userVIN: userDetails.vin,
-                        profileImageFromW3Schools: ''
-                    })
-
-                    userDetails.gender === 'Male' ? this.setState({
-                            profileImageFromW3Schools: "https://www.w3schools.com/bootstrap4/img_avatar1.png"
-                        }) : this.setState({
-                            profileImageFromW3Schools: "https://www.w3schools.com/bootstrap4/img_avatar6.png"
+                    if (result.data)
+                    {
+                        const userDetails = result.data.user_info;
+                        
+                        this.setState({
+                            userEmail: userDetails.email,
+                            userFullname: userDetails.fullname,
+                            userGender: userDetails.gender,
+                            userPhone: userDetails.phone_number,
+                            userState: userDetails.state_of_origin,
+                            userLocalGovt: userDetails.local_govt,
+                            userVIN: userDetails.vin,
+                            profileImageFromW3Schools: ''
                         })
-                }
+
+                        userDetails.gender === 'Male' ? this.setState({
+                                profileImageFromW3Schools: "https://www.w3schools.com/bootstrap4/img_avatar1.png"
+                            }) : this.setState({
+                                profileImageFromW3Schools: "https://www.w3schools.com/bootstrap4/img_avatar6.png"
+                        })
+                    }
             }).catch( error => {
                 document.getElementById('beatLoaders').style.display = 'none';
 
@@ -113,7 +118,7 @@ class Profile extends Component {
                         
                         <div className="col-md-5">
 
-                            <div className="card" style={cardStyle} >
+                            <div className="card" id="profileCardCarrier" style={cardStyle} >
                                     
                                 <img className="card-img-top" src={this.state.profileImageFromW3Schools} style={{width: '300px'}} alt="Display" />
                                 <div class="card-body">

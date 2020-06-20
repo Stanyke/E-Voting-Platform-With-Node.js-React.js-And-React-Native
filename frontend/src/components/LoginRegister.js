@@ -265,7 +265,7 @@ class LoginRegister extends Component {
                 if (result.data)
                 {
                     Cookies.set('authToken', `${result.data.data.token}`, { expires: 7, path: '/' });
-                    toast.success('Login Successful', {position: toast.POSITION.TOP_LEFT});
+                    toast.success('Login Successful', {position: toast.POSITION.TOP_LEFT, autoClose: 1500});
 
                     this.setState({
                         userLoggedIn: true
@@ -342,7 +342,7 @@ class LoginRegister extends Component {
                         if (loginResult.data)
                         {
                             Cookies.set('authToken', `${loginResult.data.data.token}`, { expires: 7, path: '/' });
-                            toast.success('Login Successful', {position: toast.POSITION.TOP_RIGHT});
+                            toast.success('Login Successful', {position: toast.POSITION.TOP_RIGHT, autoClose: 1500});
 
                             this.setState({
                                 userLoggedIn: true
