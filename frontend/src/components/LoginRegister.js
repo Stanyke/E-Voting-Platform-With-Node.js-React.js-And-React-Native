@@ -198,7 +198,7 @@ class LoginRegister extends Component {
         const loginPasswordInput = document.getElementById('loginPassword');
         const loginPasswordIcon = document.getElementById('loginPasswordIcon');
     
-        if (loginPasswordInput.type == 'password')
+        if (loginPasswordInput.type === 'password')
         {
             loginPasswordInput.type = 'text';
             loginPasswordIcon.className = 'fa fa-eye';
@@ -215,7 +215,7 @@ class LoginRegister extends Component {
         const registerPasswordInput = document.getElementById('registerPassword');
         const registerPasswordIcon = document.getElementById('registerPasswordIcon');
     
-        if (registerPasswordInput.type == 'password')
+        if (registerPasswordInput.type === 'password')
         {
             registerPasswordInput.type = 'text';
             registerPasswordIcon.className = 'fa fa-eye';
@@ -322,17 +322,19 @@ class LoginRegister extends Component {
             .then(result=>{
 
                 document.getElementById('beatLoaders').style.display = 'none';
+                document.getElementById("signInButton").disabled = false;
+                document.getElementById("registerButton").disabled = false;
 
-                if (result.data)
+                if(result.status === 200)
                 {
-                    // Cookies.set('authToken', `${result.data.data.token}`, { expires: 7, path: '/' });
-                    toast.success('Registration Successful', {position: toast.POSITION.TOP_RIGHT});
-
-                    // this.setState({
-                    //     userLoggedIn: true
-                    // })
-                    
+                    toast.success(result.data, {position: toast.POSITION.TOP_RIGHT});
                 }
+
+                else if (result.status === 201)
+                {                    
+                    toast.success('Registration Successful, You May Now Login.', {position: toast.POSITION.TOP_RIGHT});
+                }
+                
             }).catch(error=>{
                 document.getElementById('beatLoaders').style.display = 'none';
                 document.getElementById("signInButton").disabled = false;
