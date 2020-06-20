@@ -1,4 +1,5 @@
 {
+  "homepage": "http://Stanyke.github.io/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
@@ -16,6 +17,8 @@
     "react-toastify": "^6.0.5"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
