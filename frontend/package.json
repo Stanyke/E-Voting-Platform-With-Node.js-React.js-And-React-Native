@@ -1,11 +1,10 @@
 {
-  "homepage": "http://Stanyke.github.io/E-Voting-Platform-With-Node.js-React.js-And-React-Native/frontend",
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "12.13.1",
-    "npm": "6.12.1"
+    "node": "10.16.3",
+    "npm": "5.7.1"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -21,8 +20,6 @@
     "react-toastify": "^6.0.5"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
